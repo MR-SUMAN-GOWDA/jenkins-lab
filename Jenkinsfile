@@ -2,12 +2,19 @@ pipeline {
     agent any
 
     stages {
+        stage('Clone repository') {
+            steps {
+                checkout([$class: 'GitSCM',
+                branches: [[name: '*/main']],
+                userRemoteConfigs: [[url: 'https://github.com/MR-SUMAN-GOWDA/jenkins-lab.git']]])
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
-		    build 'PES1UG23CS832-1'
-                    echo 'Building the application...'
-                    sh 'g++ hello.cpp -o hello_exec' // Compiling C++ file
+                    echo "🛠 Compiling C++ program..."
+                    sh 'g++ main/main.cpp -o output'
                 }
             }
         }
@@ -15,8 +22,9 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    echo 'Running tests...'
-                    sh './hello_exec' // Executing compiled C++ file
+                    echo "✅ Running the compiled program..."
+                    sh 'chmod +x output'
+                    sh './output'
                 }
             }
         }
@@ -24,20 +32,17 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    echo 'Deploying application...'
-                    // You can replace the following line with actual deployment commands if required
-                    echo 'Deployment step completed successfully.'
+                    echo "🚀 Deployment Step - Modify as needed"
                 }
             }
         }
     }
 
     post {
-        success {
-            echo 'Pipeline executed successfully!'
-        }
         failure {
-            echo 'Pipeline failed!'
+            script {
+                echo "❌ Pipeline failed! Check logs for errors."
+            }
         }
     }
 }
