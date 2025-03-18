@@ -1,48 +1,40 @@
+https://github.com/MR-SUMAN-GOWDA/jenkins-lab.git
 pipeline {
     agent any
 
     stages {
-        stage('Clone repository') {
+        stage('Clone Repository') {
             steps {
                 checkout([$class: 'GitSCM',
-                branches: [[name: '*/main']],
-                userRemoteConfigs: [[url: 'https://github.com/MR-SUMAN-GOWDA/jenkins-lab.git']]])
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/MR-SUMAN-GOWDA/jenkins-lab.git']]
+                ])
             }
         }
 
         stage('Build') {
             steps {
-                script {
-                    echo "🛠 Compiling C++ program..."
-                    sh 'g++ main/main.cpp -o output'
-                }
+                build 'PES1UG23CS832-1'
+                sh 'g++ main/hello.cpp -o output'
             }
         }
 
         stage('Test') {
             steps {
-                script {
-                    echo "✅ Running the compiled program..."
-                    sh 'chmod +x output'
-                    sh './output'
-                }
+                sh './output'
             }
         }
 
         stage('Deploy') {
             steps {
-                script {
-                    echo "🚀 Deployment Step - Modify as needed"
-                }
+                echo 'Deploying application...'
             }
         }
     }
 
     post {
         failure {
-            script {
-                echo "❌ Pipeline failed! Check logs for errors."
-            }
+            echo 'Pipeline Failed!'
         }
     }
 }
